@@ -1,13 +1,21 @@
 package dev.capslock.exercise.airframedi
 
-import wvlet.airframe._
+import wvlet.airframe.*
 
 @main def hello(): Unit =
   println("production")
-  val prodSession = design.production.newSession
-  val prodApp = prodSession.build[Application]
-  prodApp.run()
-  prodSession.close()
+  design.production.withSession { sess =>
+    design.production.build[Application] { app =>
+      app.run()
+      // switch to power user
+      println("entering power user mode")
+      sess.withChildSession(design.productionWithPowerAccess) { powerSession =>
+        val powerApp = powerSession.build[Application]
+        powerApp.run()
+      }
+      println("eject power user mode")
+    }
+  }
   println("staging")
   design.staging.build[Application] { app =>
     app.run()
