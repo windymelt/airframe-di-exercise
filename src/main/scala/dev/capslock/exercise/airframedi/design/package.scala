@@ -9,6 +9,7 @@ package object design {
       db.RealDB("mysql://foo:bar@db.example.com:3306/foodb", pool),
     ).onInit(_ => println("db connection started"))
     .bind[mail.Mailer].toInstance(mail.RealMailer())
+    .withProductionMode
     // 自明な依存性は省略できる
     // .bind[UserManager].toSingleton
 
